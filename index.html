@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มเลขบัตรประชาชนไทย & GUID/UUID</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        /* Tabs Styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 15px;
+            padding: 5px;
+            gap: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .generator-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .input-field {
+            padding: 16px 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 18px;
+            width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.2);
+            transform: scale(1.02);
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(86, 171, 47, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.6);
+        }
+
+        .result-section {
+            margin: 40px 0;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            line-height: 1.8;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            border: 2px solid rgba(79, 172, 254, 0.2);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4facfe;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px 25px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .guid-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(79, 172, 254, 0.1);
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: rgba(79, 172, 254, 0.2);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .input-field, .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .guid-options {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎲 สุ่มเลข & GUID Generator</h1>
+            <p>สร้างเลขบัตรประชาชนไทย 13 หลัก และ GUID/UUID ที่ถูกต้องและไม่ซ้ำกัน</p>
+        </div>
+
+        <div class="content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('thai-id')">🇹🇭 บัตรประชาชนไทย</button>
+                <button class="tab" onclick="switchTab('guid')">🔗 GUID/UUID</button>
+            </div>
+
+            <!-- Thai ID Tab -->
+            <div class="tab-content active" id="thai-id">
+                <div class="generator-section">
+                    <label class="label">จำนวนเลขที่ต้องการสุ่ม</label>
+                    <div class="input-group">
+                        <input type="number" class="input-field" id="thaiIdCount" placeholder="เช่น 10" min="1" max="1000" value="1">
+                        <button class="btn btn-primary" id="generateThaiIdBtn" onclick="generateThaiIds()">
+                            🎲 สุ่มเลข
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <span class="stat-number" id="thaiIdGeneratedCount">0</span>
+                    <div class="stat-label">เลขที่สร้างล่าสุด</div>
+                </div>
+
+                <div class="result-section">
+                    <label class="label">เลขบัตรประชาชนที่สุ่มได้</label>
+                    <textarea class="textarea" id="thaiIdResultArea" placeholder="เลขที่สุ่มได้จะแสดงที่นี่..." readonly></textarea>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="copyThaiIdResults()">
+                            📋 คัดลอกทั้งหมด
+                        </button>
+                        <button class="btn btn-danger" onclick="clearThaiIdResults()">
+                            🗑️ ล้างผลลัพธ์
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GUID Tab -->
+            <div class="tab-content" id="guid">
+                <div class="generator-section">
+                    <label class="label">จำนวน GUID/UUID ที่ต้องการสุ่ม</label>
+                    <div class="input-group">
+                        <input type="number" class="input-field" id="guidCount" placeholder="เช่น 10" min="1" max="1000" value="1">
+                        <button class="btn btn-primary" id="generateGuidBtn" onclick="generateGuids()">
+                            🎲 สุ่ม GUID
+                        </button>
+                    </div>
+
+                    <div class="guid-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="upperCase" checked>
+                            <label for="upperCase">ตัวพิมพ์ใหญ่</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="withBraces">
+                            <label for="withBraces">มีวงเล็บ {}</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="withoutHyphens">
+                            <label for="withoutHyphens">ไม่มีขีด -</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <span class="stat-number" id="guidGeneratedCount">0</span>
+                    <div class="stat-label">GUID ที่สร้างล่าสุด</div>
+                </div>
+
+                <div class="result-section">
+                    <label class="label">GUID/UUID ที่สุ่มได้</label>
+                    <textarea class="textarea" id="guidResultArea" placeholder="GUID ที่สุ่มได้จะแสดงที่นี่..." readonly></textarea>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="copyGuidResults()">
+                            📋 คัดลอกทั้งหมด
+                        </button>
+                        <button class="btn btn-danger" onclick="clearGuidResults()">
+                            🗑️ ล้างผลลัพธ์
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let thaiIdResults = [];
+        let guidResults = [];
+        let generatedThaiIds = new Set();
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Thai ID Functions
+        function createThaiId() {
+            const firstDigit = Math.floor(Math.random() * 9) + 1;
+            const remainingDigits = Array.from({length: 11}, () => Math.floor(Math.random() * 10));
+            const idNumbers = [firstDigit, ...remainingDigits];
+            
+            let total = 0;
+            for (let i = 0; i < 12; i++) {
+                total += (13 - i) * idNumbers[i];
+            }
+            
+            const checkDigit = (11 - (total % 11)) % 10;
+            idNumbers.push(checkDigit);
+            
+            return idNumbers.join('');
+        }
+
+        async function generateThaiIds() {
+            const countInput = document.getElementById('thaiIdCount');
+            const count = parseInt(countInput.value);
+            const generateBtn = document.getElementById('generateThaiIdBtn');
+            const resultArea = document.getElementById('thaiIdResultArea');
+
+            if (!count || count <= 0 || count > 1000) {
+                showNotification('กรุณาระบุจำนวนระหว่าง 1-1000', 'warning');
+                return;
+            }
+
+            generateBtn.classList.add('loading');
+            generateBtn.textContent = '⏳ กำลังสร้าง...';
+            generateBtn.disabled = true;
+
+            generatedThaiIds.clear();
+            thaiIdResults = [];
+            resultArea.value = '';
+
+            const newIds = [];
+            let attempts = 0;
+            const maxAttempts = count * 1000;
+
+            while (newIds.length < count && attempts < maxAttempts) {
+                const newId = createThaiId();
+                
+                if (!generatedThaiIds.has(newId)) {
+                    generatedThaiIds.add(newId);
+                    newIds.push(newId);
+                }
+                attempts++;
+
+                if (newIds.length % 50 === 0 || newIds.length === count) {
+                    await new Promise(resolve => setTimeout(resolve, 1));
+                    updateThaiIdResults(newIds);
+                }
+            }
+
+            thaiIdResults = newIds;
+            updateThaiIdResults(newIds);
+            await autoCopyThaiIdResults(newIds.length);
+
+            generateBtn.classList.remove('loading');
+            generateBtn.textContent = '🎲 สุ่มเลข';
+            generateBtn.disabled = false;
+        }
+
+        async function autoCopyThaiIdResults(count) {
+            if (thaiIdResults.length > 0) {
+                const plainNumbers = thaiIdResults.join('\n');
+                
+                try {
+                    await navigator.clipboard.writeText(plainNumbers);
+                    showNotification(`สร้างและคัดลอกเลขไทยสำเร็จ ${count} เลข 📋`, 'success');
+                } catch (error) {
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = plainNumbers;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+                    showNotification(`สร้างและคัดลอกเลขไทยสำเร็จ ${count} เลข 📋`, 'success');
+                }
+            }
+        }
+
+        function updateThaiIdResults(ids) {
+            const resultArea = document.getElementById('thaiIdResultArea');
+            const generatedCount = document.getElementById('thaiIdGeneratedCount');
+            
+            resultArea.value = ids.map(id => formatThaiId(id)).join('\n');
+            generatedCount.textContent = ids.length.toLocaleString();
+        }
+
+        function formatThaiId(id) {
+            return id.replace(/(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/, '$1-$2-$3-$4-$5');
+        }
+
+        function copyThaiIdResults() {
+            if (thaiIdResults.length === 0) {
+                showNotification('ยังไม่มีเลขที่สุ่ม!', 'warning');
+                return;
+            }
+
+            const plainNumbers = thaiIdResults.join('\n');
+
+            navigator.clipboard.writeText(plainNumbers).then(() => {
+                showNotification(`คัดลอกเลขไทยสำเร็จ ${thaiIdResults.length} เลข`, 'success');
+            }).catch(() => {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = plainNumbers;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                showNotification(`คัดลอกเลขไทยสำเร็จ ${thaiIdResults.length} เลข`, 'success');
+            });
+        }
+
+        function clearThaiIdResults() {
+            if (thaiIdResults.length === 0) {
+                showNotification('ไม่มีข้อมูลให้ล้าง', 'warning');
+                return;
+            }
+
+            if (confirm(`คุณต้องการล้างผลลัพธ์ ${thaiIdResults.length} เลข หรือไม่?`)) {
+                generatedThaiIds.clear();
+                thaiIdResults = [];
+                document.getElementById('thaiIdResultArea').value = '';
+                document.getElementById('thaiIdGeneratedCount').textContent = '0';
+                showNotification('ล้างผลลัพธ์เลขไทยสำเร็จ', 'success');
+            }
+        }
+
+        // GUID Functions
+        function generateGuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function formatGuid(guid) {
+            const upperCase = document.getElementById('upperCase').checked;
+            const withBraces = document.getElementById('withBraces').checked;
+            const withoutHyphens = document.getElementById('withoutHyphens').checked;
+
+            let result = guid;
+            
+            if (upperCase) {
+                result = result.toUpperCase();
+            }
+            
+            if (withoutHyphens) {
+                result = result.replace(/-/g, '');
+            }
+            
+            if (withBraces) {
+                result = `{${result}}`;
+            }
+            
+            return result;
+        }
+
+        async function generateGuids() {
+            const countInput = document.getElementById('guidCount');
+            const count = parseInt(countInput.value);
+            const generateBtn = document.getElementById('generateGuidBtn');
+            const resultArea = document.getElementById('guidResultArea');
+
+            if (!count || count <= 0 || count > 1000) {
+                showNotification('กรุณาระบุจำนวนระหว่าง 1-1000', 'warning');
+                return;
+            }
+
+            generateBtn.classList.add('loading');
+            generateBtn.textContent = '⏳ กำลังสร้าง...';
+            generateBtn.disabled = true;
+
+            guidResults = [];
+            resultArea.value = '';
+
+            const newGuids = [];
+            for (let i = 0; i < count; i++) {
+                const guid = generateGuid();
+                newGuids.push(guid);
+
+                if (i % 50 === 0 || i === count - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1));
+                    updateGuidResults(newGuids);
+                }
+            }
+
+            guidResults = newGuids;
+            updateGuidResults(newGuids);
+            await autoCopyGuidResults(newGuids.length);
+
+            generateBtn.classList.remove('loading');
+            generateBtn.textContent = '🎲 สุ่ม GUID';
+            generateBtn.disabled = false;
+        }
+
+        async function autoCopyGuidResults(count) {
+            if (guidResults.length > 0) {
+                const formattedGuids = guidResults.map(guid => formatGuid(guid)).join('\n');
+                
+                try {
+                    await navigator.clipboard.writeText(formattedGuids);
+                    showNotification(`สร้างและคัดลอก GUID สำเร็จ ${count} ตัว 📋`, 'success');
+                } catch (error) {
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = formattedGuids;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+                    showNotification(`สร้างและคัดลอก GUID สำเร็จ ${count} ตัว 📋`, 'success');
+                }
+            }
+        }
+
+        function updateGuidResults(guids) {
+            const resultArea = document.getElementById('guidResultArea');
+            const generatedCount = document.getElementById('guidGeneratedCount');
+            
+            resultArea.value = guids.map(guid => formatGuid(guid)).join('\n');
+            generatedCount.textContent = guids.length.toLocaleString();
+        }
+
+        function copyGuidResults() {
+            if (guidResults.length === 0) {
+                showNotification('ยังไม่มี GUID ที่สุ่ม!', 'warning');
+                return;
+            }
+
+            const formattedGuids = guidResults.map(guid => formatGuid(guid)).join('\n');
+
+            navigator.clipboard.writeText(formattedGuids).then(() => {
+                showNotification(`คัดลอก GUID สำเร็จ ${guidResults.length} ตัว`, 'success');
+            }).catch(() => {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = formattedGuids;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                showNotification(`คัดลอก GUID สำเร็จ ${guidResults.length} ตัว`, 'success');
+            });
+        }
+
+        function clearGuidResults() {
+            if (guidResults.length === 0) {
+                showNotification('ไม่มีข้อมูลให้ล้าง', 'warning');
+                return;
+            }
+
+            if (confirm(`คุณต้องการล้างผลลัพธ์ ${guidResults.length} GUID หรือไม่?`)) {
+                guidResults = [];
+                document.getElementById('guidResultArea').value = '';
+                document.getElementById('guidGeneratedCount').textContent = '0';
+                showNotification('ล้างผลลัพธ์ GUID สำเร็จ', 'success');
+            }
+        }
+
+        // Shared Functions
+        function showNotification(message, type = 'success') {
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Event Listeners
+        document.getElementById('thaiIdCount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateThaiIds();
+            }
+        });
+
+        document.getElementById('guidCount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateGuids();
+            }
+        });
+
+        document.getElementById('thaiIdCount').addEventListener('input', function(e) {
+            if (parseInt(e.target.value) < 0) {
+                e.target.value = Math.abs(parseInt(e.target.value));
+            }
+        });
+
+        document.getElementById('guidCount').addEventListener('input', function(e) {
+            if (parseInt(e.target.value) < 0) {
+                e.target.value = Math.abs(parseInt(e.target.value));
+            }
+        });
+
+        // Update GUID display when options change
+        document.getElementById('upperCase').addEventListener('change', function() {
+            if (guidResults.length > 0) {
+                updateGuidResults(guidResults);
+            }
+        });
+
+        document.getElementById('withBraces').addEventListener('change', function() {
+            if (guidResults.length > 0) {
+                updateGuidResults(guidResults);
+            }
+        });
+
+        document.getElementById('withoutHyphens').addEventListener('change', function() {
+            if (guidResults.length > 0) {
+                updateGuidResults(guidResults);
+            }
+        });
+    </script>
+</body>
+</html>
