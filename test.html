@@ -924,7 +924,7 @@
                 if (thNicknamePart) {
                     combinedTh = combinedTh ? `${combinedTh} (${thNicknamePart})` : `(${thNicknamePart})`;
                 }
-                if (combinedTh) thNameParts.push(`TH: ${combinedTh}`);
+                if (combinedTh) thNameParts.push(`${combinedTh}`);
             }
 
             // English Name Construction
@@ -947,7 +947,7 @@
                 if (enNicknamePart) {
                     combinedEn = combinedEn ? `${combinedEn} (${enNicknamePart})` : `(${enNicknamePart})`;
                 }
-                if (combinedEn) enNameParts.push(`EN: ${combinedEn}`);
+                if (combinedEn) enNameParts.push(`${combinedEn}`);
             }
             
             if (thNameParts.length === 0 && enNameParts.length === 0) return "";
