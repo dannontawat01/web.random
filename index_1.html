@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มเลขบัตรประชาชนไทย, GUID, ชื่อ และ เลข</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        /* Tabs Styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 15px;
+            padding: 5px;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1 1 auto; 
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+            min-width: 120px; 
+            text-align: center;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .generator-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .options-group {
+            display: flex;
+            flex-direction: column; 
+            gap: 20px; 
+            justify-content: center;
+            align-items: center; 
+            margin: 25px 0;
+        }
+
+        .option-row { /* Renamed from name-options-row for generality */
+            display: flex;
+            gap: 10px; 
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .input-field {
+            padding: 16px 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 18px;
+            width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.2);
+            transform: scale(1.02);
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(86, 171, 47, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.6);
+        }
+
+        .result-section {
+            margin: 40px 0;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            resize: vertical;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            line-height: 1.8;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+        }
+        
+        .textarea.courier-font { 
+            font-family: 'Courier New', monospace;
+        }
+
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            border: 2px solid rgba(79, 172, 254, 0.2);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4facfe;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px 25px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .checkbox-group-container {
+            margin-bottom: 10px; /* Space below each group of checkboxes */
+        }
+        
+        .checkbox-group-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px; /* Increased margin for title */
+            display: block;
+            text-align: center; /* Center title */
+        }
+
+        .guid-options { 
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 10px 0; 
+            flex-wrap: wrap;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(79, 172, 254, 0.1);
+            padding: 10px 15px; /* Slightly smaller padding for more items */
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: rgba(79, 172, 254, 0.2);
+        }
+
+        .checkbox-group input[type="checkbox"],
+        .checkbox-group input[type="radio"] {
+            width: 17px; /* Adjusted size */
+            height: 17px; /* Adjusted size */
+            cursor: pointer;
+            accent-color: #4facfe; 
+        }
+
+        .checkbox-group label {
+            font-size: 15px; /* Slightly smaller font */
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .input-group, .options-group, .option-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .input-field, .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .tabs {
+                flex-direction: column; 
+                gap: 5px;
+            }
+
+            .guid-options, .option-row { /* Target option-row for name options */
+                flex-direction: column;
+                align-items: center;
+            }
+             .checkbox-group {
+                width: 100%;
+                max-width: 250px; /* Max width for checkbox groups on mobile */
+                justify-content: center;
+            }
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎲 สุ่มเลข, GUID, ชื่อ & เลขตามสั่ง</h1>
+            <p>สร้างเลขบัตรประชาชนไทย 13 หลัก, GUID/UUID, ชื่อ-นามสกุล และเลขตามจำนวนและความยาวที่ต้องการ</p>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('thai-id', event)">🇹🇭 บัตรประชาชนไทย</button>
+                <button class="tab" onclick="switchTab('guid', event)">🔗 GUID/UUID</button>
+                <button class="tab" onclick="switchTab('random-name', event)">👤 สุ่มชื่อ</button>
+                <button class="tab" onclick="switchTab('random-number', event)">🔢 สุ่มเลขตามสั่ง</button>
+            </div>
+
+            <div class="tab-content active" id="thai-id">
+                <div class="generator-section">
+                    <label class="label">จำนวนเลขที่ต้องการสุ่ม</label>
+                    <div class="input-group">
+                        <input type="number" class="input-field" id="thaiIdCount" placeholder="เช่น 10" min="1" max="1000" value="1">
+                        <button class="btn btn-primary" id="generateThaiIdBtn" onclick="generateThaiIds()">
+                            🎲 สุ่มเลข
+                        </button>
+                    </div>
+                </div>
+                <div class="stats">
+                    <span class="stat-number" id="thaiIdGeneratedCount">0</span>
+                    <div class="stat-label">เลขที่สร้างล่าสุด</div>
+                </div>
+                <div class="result-section">
+                    <label class="label">เลขบัตรประชาชนที่สุ่มได้</label>
+                    <textarea class="textarea courier-font" id="thaiIdResultArea" placeholder="เลขที่สุ่มได้จะแสดงที่นี่..." readonly></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="copyThaiIdResults()">📋 คัดลอกทั้งหมด</button>
+                        <button class="btn btn-danger" onclick="clearThaiIdResults()">🗑️ ล้างผลลัพธ์</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="guid">
+                <div class="generator-section">
+                    <label class="label">จำนวน GUID/UUID ที่ต้องการสุ่ม</label>
+                    <div class="input-group">
+                        <input type="number" class="input-field" id="guidCount" placeholder="เช่น 10" min="1" max="1000" value="1">
+                        <button class="btn btn-primary" id="generateGuidBtn" onclick="generateGuids()">🎲 สุ่ม GUID</button>
+                    </div>
+                    <div class="guid-options"> <div class="checkbox-group">
+                            <input type="checkbox" id="upperCase" checked>
+                            <label for="upperCase">ตัวพิมพ์ใหญ่</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="withBraces">
+                            <label for="withBraces">มีวงเล็บ {}</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="withoutHyphens">
+                            <label for="withoutHyphens">ไม่มีขีด -</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <span class="stat-number" id="guidGeneratedCount">0</span>
+                    <div class="stat-label">GUID ที่สร้างล่าสุด</div>
+                </div>
+                <div class="result-section">
+                    <label class="label">GUID/UUID ที่สุ่มได้</label>
+                    <textarea class="textarea courier-font" id="guidResultArea" placeholder="GUID ที่สุ่มได้จะแสดงที่นี่..." readonly></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="copyGuidResults()">📋 คัดลอกทั้งหมด</button>
+                        <button class="btn btn-danger" onclick="clearGuidResults()">🗑️ ล้างผลลัพธ์</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="random-name">
+                <div class="generator-section">
+                    <label class="label">จำนวนชื่อที่ต้องการสุ่ม</label>
+                    <div class="input-group">
+                        <input type="number" class="input-field" id="nameCount" placeholder="เช่น 5" min="1" max="1000" value="1">
+                    </div>
+
+                    <div class="options-group">
+                        <div class="checkbox-group-container">
+                            <span class="checkbox-group-title">เลือกเพศ</span>
+                            <div class="option-row">
+                                <div class="checkbox-group">
+                                    <input type="radio" id="genderFemale" name="gender" value="female">
+                                    <label for="genderFemale">♀️ หญิง</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="radio" id="genderMale" name="gender" value="male">
+                                    <label for="genderMale">♂️ ชาย</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="radio" id="genderAny" name="gender" value="any" checked>
+                                    <label for="genderAny">ใดๆ</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkbox-group-container">
+                            <span class="checkbox-group-title">เลือกภาษา</span>
+                            <div class="option-row">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="nameLangTh" checked>
+                                    <label for="nameLangTh">🇹🇭 ไทย</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="nameLangEn">
+                                    <label for="nameLangEn">🇬🇧 อังกฤษ</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkbox-group-container">
+                             <span class="checkbox-group-title">เลือกประเภทชื่อ</span>
+                            <div class="option-row">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="nameTypeFirst" checked>
+                                    <label for="nameTypeFirst">ชื่อจริง</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="nameTypeLast" checked>
+                                    <label for="nameTypeLast">นามสกุล</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="nameTypeNickname">
+                                    <label for="nameTypeNickname">ชื่อเล่น</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <button class="btn btn-primary" id="generateNameBtn" onclick="generateNames()" style="margin-top: 10px;">
+                        👤 สุ่มชื่อ
+                    </button>
+                </div>
+
+                <div class="stats">
+                    <span class="stat-number" id="nameGeneratedCount">0</span>
+                    <div class="stat-label">ชื่อที่สร้างล่าสุด</div>
+                </div>
+
+                <div class="result-section">
+                    <label class="label">ชื่อ-นามสกุลที่สุ่มได้</label>
+                    <textarea class="textarea" id="nameResultArea" placeholder="ชื่อ-นามสกุลที่สุ่มได้จะแสดงที่นี่..." readonly></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="copyNameResults()">📋 คัดลอกทั้งหมด</button>
+                        <button class="btn btn-danger" onclick="clearNameResults()">🗑️ ล้างผลลัพธ์</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="random-number">
+                <div class="generator-section">
+                    <label class="label">ตั้งค่าการสุ่มเลข</label>
+                    <div class="input-group">
+                        <input type="number" class="input-field" id="customNumberCount" placeholder="จำนวน (เช่น 10)" min="1" max="1000" value="1">
+                        <input type="number" class="input-field" id="customNumberLength" placeholder="ความยาว (เช่น 8)" min="1" max="50" value="8">
+                    </div>
+                     <button class="btn btn-primary" id="generateCustomNumberBtn" onclick="generateCustomNumbers()" style="margin-top: 20px;">
+                        🔢 สุ่มเลข
+                    </button>
+                </div>
+                <div class="stats">
+                    <span class="stat-number" id="customNumberGeneratedCount">0</span>
+                    <div class="stat-label">เลขที่สร้างล่าสุด</div>
+                </div>
+                <div class="result-section">
+                    <label class="label">เลขที่สุ่มได้</label>
+                    <textarea class="textarea courier-font" id="customNumberResultArea" placeholder="เลขที่สุ่มได้จะแสดงที่นี่..." readonly></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-success" onclick="copyCustomNumberResults()">📋 คัดลอกทั้งหมด</button>
+                        <button class="btn btn-danger" onclick="clearCustomNumberResults()">🗑️ ล้างผลลัพธ์</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let thaiIdResults = [];
+        let guidResults = [];
+        let nameResults = [];
+        let customNumberResults = [];
+        let generatedThaiIds = new Set();
+
+        // --- Name Data (to be populated from data.json) ---
+        let firstNamesFemaleTh = [], firstNamesFemaleEn = [];
+        let firstNamesMaleTh = [], firstNamesMaleEn = [];
+        let allLastNamesTh = [], allLastNamesEn = []; 
+        let nicknamesFemaleTh = [], nicknamesFemaleEn = [];
+        let nicknamesMaleTh = [], nicknamesMaleEn = [];
+        let allFirstNamesTh = [], allFirstNamesEn = []; // Combined for 'any' gender
+        let allNicknamesTh = [], allNicknamesEn = []; // Combined for 'any' gender
+
+        async function loadNameData() {
+            const generateNameBtn = document.getElementById('generateNameBtn');
+            const originalBtnText = generateNameBtn.innerHTML;
+            generateNameBtn.disabled = true;
+            generateNameBtn.innerHTML = '⏳ กำลังโหลดข้อมูล...';
+
+            try {
+                const response = await fetch('data.json'); // Assuming data.json is in the same directory
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                data.firstnameFemale.forEach(name => {
+                    if (name.th) firstNamesFemaleTh.push(name.th);
+                    if (name.en) firstNamesFemaleEn.push(name.en);
+                });
+                data.firstnameMale.forEach(name => {
+                    if (name.th) firstNamesMaleTh.push(name.th);
+                    if (name.en) firstNamesMaleEn.push(name.en);
+                });
+                data.lastname.forEach(name => {
+                    if (name.th) allLastNamesTh.push(name.th);
+                    if (name.en) allLastNamesEn.push(name.en);
+                });
+                data.nicknameFemale.forEach(name => {
+                    if (name.th) nicknamesFemaleTh.push(name.th);
+                    if (name.en) nicknamesFemaleEn.push(name.en);
+                });
+                data.nicknameMale.forEach(name => {
+                    if (name.th) nicknamesMaleTh.push(name.th);
+                    if (name.en) nicknamesMaleEn.push(name.en);
+                });
+
+                allFirstNamesTh = [...firstNamesFemaleTh, ...firstNamesMaleTh];
+                allFirstNamesEn = [...firstNamesFemaleEn, ...firstNamesMaleEn];
+                allNicknamesTh = [...nicknamesFemaleTh, ...nicknamesMaleTh];
+                allNicknamesEn = [...nicknamesFemaleEn, ...nicknamesMaleEn];
+                
+                if (generateNameBtn) {
+                     showNotification('โหลดข้อมูลชื่อสำเร็จ!', 'success');
+                    generateNameBtn.disabled = false;
+                    generateNameBtn.innerHTML = originalBtnText;
+                }
+            } catch (error) {
+                console.error("Failed to load name data:", error);
+                if (generateNameBtn) {
+                    showNotification('เกิดข้อผิดพลาดในการโหลดข้อมูลชื่อ!', 'error');
+                    generateNameBtn.innerHTML = '⚠️ โหลดข้อมูลล้มเหลว';
+                }
+            }
+        }
+
+
+        // Tab Management
+        function switchTab(tabName, event) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (event && event.target) {
+                 event.target.classList.add('active');
+            } else { 
+                const fallbackTab = Array.from(document.querySelectorAll('.tab')).find(t => t.getAttribute('onclick').includes(tabName));
+                if (fallbackTab) fallbackTab.classList.add('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // --- Thai ID Functions ---
+        function createThaiId() {
+            const firstDigit = Math.floor(Math.random() * 8) + 1; 
+            const remainingDigits = Array.from({length: 11}, () => Math.floor(Math.random() * 10));
+            const idNumbers = [firstDigit, ...remainingDigits];
+            let total = 0;
+            for (let i = 0; i < 12; i++) {
+                total += (13 - i) * idNumbers[i];
+            }
+            const checkDigit = (11 - (total % 11)) % 10;
+            idNumbers.push(checkDigit);
+            return idNumbers.join('');
+        }
+
+        async function generateThaiIds() {
+            const countInput = document.getElementById('thaiIdCount');
+            const count = parseInt(countInput.value);
+            const generateBtn = document.getElementById('generateThaiIdBtn');
+            if (!count || count <= 0 || count > 1000) {
+                showNotification('กรุณาระบุจำนวนระหว่าง 1-1000', 'warning');
+                return;
+            }
+            generateBtn.classList.add('loading');
+            generateBtn.innerHTML = '⏳ กำลังสร้าง...';
+            generateBtn.disabled = true;
+            generatedThaiIds.clear();
+            const resultArea = document.getElementById('thaiIdResultArea');
+            resultArea.value = ''; 
+            const allNewIds = [];
+            let attempts = 0;
+            const maxAttempts = count * 1000; 
+            for (let i = 0; i < count; i++) {
+                let newId;
+                do {
+                    newId = createThaiId();
+                    attempts++;
+                    if (attempts > maxAttempts && allNewIds.length < i + 1) {
+                        showNotification('ไม่สามารถสร้างเลขที่ไม่ซ้ำกันได้เพียงพอ ลองอีกครั้ง', 'warning');
+                        break;
+                    }
+                } while (generatedThaiIds.has(newId) && attempts <= maxAttempts);
+                if (!generatedThaiIds.has(newId)) {
+                    generatedThaiIds.add(newId);
+                    allNewIds.push(newId);
+                }
+                if ((i + 1) % 50 === 0 || (i + 1) === count) {
+                    updateThaiIdResultsDisplay(allNewIds); 
+                    await new Promise(resolve => setTimeout(resolve, 1)); 
+                }
+                if (attempts > maxAttempts && allNewIds.length < count) break;
+            }
+            thaiIdResults = allNewIds; 
+            updateThaiIdResultsDisplay(thaiIdResults); 
+            if (thaiIdResults.length > 0) {
+                 await autoCopyResults(thaiIdResults.join('\n'), `สร้างและคัดลอกเลขไทยสำเร็จ ${thaiIdResults.length} เลข 📋`);
+            } else if (count > 0) {
+                showNotification('ไม่สามารถสร้างเลขได้', 'error');
+            }
+            generateBtn.classList.remove('loading');
+            generateBtn.innerHTML = '🎲 สุ่มเลข';
+            generateBtn.disabled = false;
+        }
+        
+        function updateThaiIdResultsDisplay(idsToDisplay) {
+            const resultArea = document.getElementById('thaiIdResultArea');
+            const generatedCount = document.getElementById('thaiIdGeneratedCount');
+            resultArea.value = idsToDisplay.map(id => formatThaiId(id)).join('\n');
+            generatedCount.textContent = idsToDisplay.length.toLocaleString();
+        }
+
+        function formatThaiId(id) {
+            if (!id || id.length !== 13) return id;
+            return id.replace(/(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/, '$1-$2-$3-$4-$5');
+        }
+
+        function copyThaiIdResults() {
+            if (thaiIdResults.length === 0) {
+                showNotification('ยังไม่มีเลขที่สุ่ม!', 'warning');
+                return;
+            }
+            copyToClipboard(thaiIdResults.join('\n'), `คัดลอกเลขไทยสำเร็จ ${thaiIdResults.length} เลข`);
+        }
+
+        function clearThaiIdResults() {
+            if (thaiIdResults.length === 0) {
+                showNotification('ไม่มีข้อมูลให้ล้าง', 'warning');
+                return;
+            }
+            if (confirm(`คุณต้องการล้างผลลัพธ์ ${thaiIdResults.length} เลข หรือไม่?`)) {
+                generatedThaiIds.clear();
+                thaiIdResults = [];
+                document.getElementById('thaiIdResultArea').value = '';
+                document.getElementById('thaiIdGeneratedCount').textContent = '0';
+                showNotification('ล้างผลลัพธ์เลขไทยสำเร็จ', 'success');
+            }
+        }
+
+        // --- GUID Functions ---
+        function generateGuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function formatGuid(guid) {
+            const upperCase = document.getElementById('upperCase').checked;
+            const withBraces = document.getElementById('withBraces').checked;
+            const withoutHyphens = document.getElementById('withoutHyphens').checked;
+            let result = guid;
+            if (upperCase) result = result.toUpperCase();
+            if (withoutHyphens) result = result.replace(/-/g, '');
+            if (withBraces) result = `{${result}}`;
+            return result;
+        }
+
+        async function generateGuids() {
+            const countInput = document.getElementById('guidCount');
+            const count = parseInt(countInput.value);
+            const generateBtn = document.getElementById('generateGuidBtn');
+            if (!count || count <= 0 || count > 1000) {
+                showNotification('กรุณาระบุจำนวนระหว่าง 1-1000', 'warning');
+                return;
+            }
+            generateBtn.classList.add('loading');
+            generateBtn.innerHTML = '⏳ กำลังสร้าง...';
+            generateBtn.disabled = true;
+            const resultArea = document.getElementById('guidResultArea');
+            resultArea.value = ''; 
+            const newGuids = [];
+            for (let i = 0; i < count; i++) {
+                newGuids.push(generateGuid());
+                if ((i + 1) % 50 === 0 || (i + 1) === count) {
+                    updateGuidResultsDisplay(newGuids);
+                    await new Promise(resolve => setTimeout(resolve, 1)); 
+                }
+            }
+            guidResults = newGuids;
+            updateGuidResultsDisplay(guidResults);
+             if (guidResults.length > 0) {
+                await autoCopyResults(guidResults.map(g => formatGuid(g)).join('\n'), `สร้างและคัดลอก GUID สำเร็จ ${guidResults.length} ตัว 📋`);
+            }
+            generateBtn.classList.remove('loading');
+            generateBtn.innerHTML = '🎲 สุ่ม GUID';
+            generateBtn.disabled = false;
+        }
+
+        function updateGuidResultsDisplay(guidsToDisplay) {
+            const resultArea = document.getElementById('guidResultArea');
+            const generatedCount = document.getElementById('guidGeneratedCount');
+            resultArea.value = guidsToDisplay.map(guid => formatGuid(guid)).join('\n');
+            generatedCount.textContent = guidsToDisplay.length.toLocaleString();
+        }
+        
+        function copyGuidResults() {
+            if (guidResults.length === 0) {
+                showNotification('ยังไม่มี GUID ที่สุ่ม!', 'warning');
+                return;
+            }
+            copyToClipboard(guidResults.map(guid => formatGuid(guid)).join('\n'), `คัดลอก GUID สำเร็จ ${guidResults.length} ตัว`);
+        }
+
+        function clearGuidResults() {
+             if (guidResults.length === 0) {
+                showNotification('ไม่มีข้อมูลให้ล้าง', 'warning');
+                return;
+            }
+            if (confirm(`คุณต้องการล้างผลลัพธ์ ${guidResults.length} GUID หรือไม่?`)) {
+                guidResults = [];
+                document.getElementById('guidResultArea').value = '';
+                document.getElementById('guidGeneratedCount').textContent = '0';
+                showNotification('ล้างผลลัพธ์ GUID สำเร็จ', 'success');
+            }
+        }
+
+        // --- Random Name Functions ---
+        function createRandomName() {
+            const selectedGender = document.querySelector('input[name="gender"]:checked').value;
+            const langTh = document.getElementById('nameLangTh').checked;
+            const langEn = document.getElementById('nameLangEn').checked;
+            const typeFirst = document.getElementById('nameTypeFirst').checked;
+            const typeLast = document.getElementById('nameTypeLast').checked;
+            const typeNickname = document.getElementById('nameTypeNickname').checked;
+
+            if (allLastNamesTh.length === 0 && allFirstNamesTh.length === 0 && allNicknamesTh.length === 0) { // Basic check if data isn't loaded
+                return "ข้อมูลชื่อยังไม่พร้อมใช้งาน";
+            }
+
+            let thNameParts = [];
+            let enNameParts = [];
+
+            // Helper function to get corresponding names from data arrays
+            function getCorrespondingName(thArray, enArray, selectedIndex) {
+                if (selectedIndex >= 0 && selectedIndex < thArray.length && selectedIndex < enArray.length) {
+                    return {
+                        th: thArray[selectedIndex],
+                        en: enArray[selectedIndex]
+                    };
+                }
+                return { th: "", en: "" };
+            }
+
+            // Select indices for each name part
+            let firstNameIndex = -1, lastNameIndex = -1, nicknameIndex = -1;
+
+            // Get appropriate arrays based on gender
+            let currentFirstNamesTh, currentFirstNamesEn, currentNicknamesTh, currentNicknamesEn;
+            if (selectedGender === 'female') {
+                currentFirstNamesTh = firstNamesFemaleTh;
+                currentFirstNamesEn = firstNamesFemaleEn;
+                currentNicknamesTh = nicknamesFemaleTh;
+                currentNicknamesEn = nicknamesFemaleEn;
+            } else if (selectedGender === 'male') {
+                currentFirstNamesTh = firstNamesMaleTh;
+                currentFirstNamesEn = firstNamesMaleEn;
+                currentNicknamesTh = nicknamesMaleTh;
+                currentNicknamesEn = nicknamesMaleEn;
+            } else { // 'any'
+                currentFirstNamesTh = allFirstNamesTh;
+                currentFirstNamesEn = allFirstNamesEn;
+                currentNicknamesTh = allNicknamesTh;
+                currentNicknamesEn = allNicknamesEn;
+            }
+
+            // Generate random indices for each name type
+            if (typeFirst && currentFirstNamesTh && currentFirstNamesTh.length > 0) {
+                firstNameIndex = Math.floor(Math.random() * Math.min(currentFirstNamesTh.length, currentFirstNamesEn.length));
+            }
+            if (typeLast && allLastNamesTh && allLastNamesTh.length > 0) {
+                lastNameIndex = Math.floor(Math.random() * Math.min(allLastNamesTh.length, allLastNamesEn.length));
+            }
+            if (typeNickname && currentNicknamesTh && currentNicknamesTh.length > 0) {
+                nicknameIndex = Math.floor(Math.random() * Math.min(currentNicknamesTh.length, currentNicknamesEn.length));
+            }
+
+            // Build name parts
+            let thFirstNamePart = "", enFirstNamePart = "";
+            let thLastNamePart = "", enLastNamePart = "";
+            let thNicknamePart = "", enNicknamePart = "";
+
+            if (firstNameIndex >= 0) {
+                const firstName = getCorrespondingName(currentFirstNamesTh, currentFirstNamesEn, firstNameIndex);
+                thFirstNamePart = firstName.th;
+                enFirstNamePart = firstName.en;
+            }
+
+            if (lastNameIndex >= 0) {
+                const lastName = getCorrespondingName(allLastNamesTh, allLastNamesEn, lastNameIndex);
+                thLastNamePart = lastName.th;
+                enLastNamePart = lastName.en;
+            }
+
+            if (nicknameIndex >= 0) {
+                const nickname = getCorrespondingName(currentNicknamesTh, currentNicknamesEn, nicknameIndex);
+                thNicknamePart = nickname.th;
+                enNicknamePart = nickname.en;
+            }
+
+            // Construct final names
+            if (langTh) {
+                let combinedTh = [thFirstNamePart, thLastNamePart].filter(Boolean).join(' ');
+                if (thNicknamePart) {
+                    combinedTh = combinedTh ? `${combinedTh} (${thNicknamePart})` : `(${thNicknamePart})`;
+                }
+                if (combinedTh) thNameParts.push(combinedTh);
+            }
+
+            if (langEn) {
+                let combinedEn = [enFirstNamePart, enLastNamePart].filter(Boolean).join(' ');
+                if (enNicknamePart) {
+                    combinedEn = combinedEn ? `${combinedEn} (${enNicknamePart})` : `(${enNicknamePart})`;
+                }
+                if (combinedEn) enNameParts.push(combinedEn);
+            }
+            
+            if (thNameParts.length === 0 && enNameParts.length === 0) return "";
+            
+            // If both languages are selected, show them on the same line separated by " | "
+            if (langTh && langEn && thNameParts.length > 0 && enNameParts.length > 0) {
+                return `${thNameParts[0]} | ${enNameParts[0]}`;
+            }
+            
+            return thNameParts.concat(enNameParts).join(', ');
+        }
+
+        // --- Random Custom Number Functions ---
+        function createCustomRandomNumber(length) {
+            let number = '';
+            const digits = '0123456789';
+            for (let i = 0; i < length; i++) {
+                number += digits.charAt(Math.floor(Math.random() * digits.length));
+            }
+            return number;
+        }
+
+        async function generateCustomNumbers() {
+            const countInput = document.getElementById('customNumberCount');
+            const lengthInput = document.getElementById('customNumberLength');
+            const count = parseInt(countInput.value);
+            const length = parseInt(lengthInput.value);
+            const generateBtn = document.getElementById('generateCustomNumberBtn');
+
+            if (!count || count <= 0 || count > 1000) {
+                showNotification('กรุณาระบุจำนวนระหว่าง 1-1000', 'warning');
+                return;
+            }
+            if (!length || length <= 0 || length > 50) { 
+                showNotification('กรุณาระบุความยาวระหว่าง 1-50', 'warning');
+                return;
+            }
+            generateBtn.classList.add('loading');
+            generateBtn.innerHTML = '⏳ กำลังสร้าง...';
+            generateBtn.disabled = true;
+            const resultArea = document.getElementById('customNumberResultArea');
+            resultArea.value = '';
+            const newNumbers = [];
+            for (let i = 0; i < count; i++) {
+                newNumbers.push(createCustomRandomNumber(length));
+                 if ((i + 1) % 50 === 0 || (i + 1) === count) {
+                    updateCustomNumberResultsDisplay(newNumbers);
+                    await new Promise(resolve => setTimeout(resolve, 1));
+                }
+            }
+            customNumberResults = newNumbers;
+            updateCustomNumberResultsDisplay(customNumberResults);
+            if (customNumberResults.length > 0) {
+                 await autoCopyResults(customNumberResults.join('\n'), `สร้างและคัดลอกเลขสำเร็จ ${customNumberResults.length} ตัว 📋`);
+            }
+            generateBtn.classList.remove('loading');
+            generateBtn.innerHTML = '🔢 สุ่มเลข';
+            generateBtn.disabled = false;
+        }
+
+        function updateCustomNumberResultsDisplay(numbersToDisplay) {
+            const resultArea = document.getElementById('customNumberResultArea');
+            const generatedCount = document.getElementById('customNumberGeneratedCount');
+            resultArea.value = numbersToDisplay.join('\n');
+            generatedCount.textContent = numbersToDisplay.length.toLocaleString();
+        }
+
+        function copyCustomNumberResults() {
+            if (customNumberResults.length === 0) {
+                showNotification('ยังไม่มีเลขที่สุ่ม!', 'warning');
+                return;
+            }
+            copyToClipboard(customNumberResults.join('\n'), `คัดลอกเลขสำเร็จ ${customNumberResults.length} ตัว`);
+        }
+
+        function clearCustomNumberResults() {
+             if (customNumberResults.length === 0) {
+                showNotification('ไม่มีข้อมูลให้ล้าง', 'warning');
+                return;
+            }
+            if (confirm(`คุณต้องการล้างผลลัพธ์ ${customNumberResults.length} เลข หรือไม่?`)) {
+                customNumberResults = [];
+                document.getElementById('customNumberResultArea').value = '';
+                document.getElementById('customNumberGeneratedCount').textContent = '0';
+                showNotification('ล้างผลลัพธ์เลขสำเร็จ', 'success');
+            }
+        }
+        
+        // --- Shared Functions ---
+        async function autoCopyResults(textToCopy, successMessage) {
+            if (!textToCopy) return;
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                showNotification(successMessage, 'success');
+            } catch (error) {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification(successMessage, 'success');
+                } catch (err) {
+                    showNotification('คัดลอกอัตโนมัติไม่สำเร็จ โปรดคัดลอกด้วยตนเอง', 'warning');
+                }
+                document.body.removeChild(tempTextArea);
+            }
+        }
+
+        function copyToClipboard(textToCopy, successMessage) {
+             if (!textToCopy) {
+                showNotification('ไม่มีข้อมูลให้คัดลอก', 'warning');
+                return;
+            }
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification(successMessage, 'success');
+            }).catch(() => {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                showNotification(successMessage, 'success');
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) existingNotification.remove();
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => { if (notification.parentNode) notification.remove(); }, 300);
+            }, 4000);
+        }
+
+        // --- Event Listeners ---
+        function setupInputValidation(inputId) {
+            const inputElement = document.getElementById(inputId);
+            if (inputElement) {
+                inputElement.addEventListener('input', function(e) {
+                    if (parseInt(e.target.value) < 0) e.target.value = Math.abs(parseInt(e.target.value));
+                    const maxVal = parseInt(e.target.max);
+                    if (maxVal && parseInt(e.target.value) > maxVal) e.target.value = maxVal;
+                });
+            }
+        }
+        
+        ['thaiIdCount', 'guidCount', 'nameCount', 'customNumberCount', 'customNumberLength'].forEach(setupInputValidation);
+
+        document.getElementById('thaiIdCount').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateThaiIds(); });
+        document.getElementById('guidCount').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateGuids(); });
+        document.getElementById('nameCount').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateNames(); });
+        document.getElementById('customNumberCount').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateCustomNumbers(); });
+        document.getElementById('customNumberLength').addEventListener('keypress', function(e) { if (e.key === 'Enter') generateCustomNumbers(); });
+
+        ['upperCase', 'withBraces', 'withoutHyphens'].forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                if (guidResults.length > 0) updateGuidResultsDisplay(guidResults); 
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', loadNameData);
+
+    </script>
+</body>
+</html>
