@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/mystyle_json.css">
+    <title>JSON to Table Converter</title>
+</head>
+<body>
+    <div class="container">
+        <h1>JSON to Table Converter</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="jsonInput">ข้อมูล JSON หรือ Text:</label>
+                <textarea id="jsonInput" placeholder='ใส่ข้อมูล JSON หรือ Text ที่ต้องการแปลงที่นี่...'></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="convertJSONToTable()">แปลง JSON เป็นตาราง (1st Submit)</button>
+                <button class="btn-secondary" onclick="generateSecondTable()">2nd</button>
+                <button class="btn-primary" onclick="convertTextToTable()">แปลง Text เป็นตาราง (Mickey Mouse)</button>
+                <button class="btn-clear" onclick="clearAll()">ล้างข้อมูล</button>
+            </div>
+        </div>
+
+        <div id="messageArea"></div>
+
+        <div class="results-section">
+            <div id="resultTable" class="table-container" style="display: none;">
+                <div class="table-title">
+                    <span>ตาราง Result</span>
+                    <div class="copy-buttons">
+                        <button class="copy-btn" onclick="copyTableData('resultTableContent', 'csv')">📋 CSV</button>
+                        <button class="copy-btn" onclick="copyTableData('resultTableContent', 'tsv')">📋 TSV</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <div id="resultTableContent"></div>
+                </div>
+            </div>
+
+            <div id="secondTable" class="table-container" style="display: none;">
+                <div class="table-title">
+                    <span>ตาราง 2nd</span>
+                    <div class="copy-buttons">
+                        <button class="copy-btn" onclick="copyTableData('secondTableContent', 'csv')">📋 CSV</button>
+                        <button class="copy-btn" onclick="copyTableData('secondTableContent', 'tsv')">📋 TSV</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <div id="secondTableContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="copyNotification" class="copy-notification">
+            คัดลอกข้อมูลสำเร็จ! 📋
+        </div>
+    </div>
+
+<script src="js/myscripts_json.js"></script>
+</body>
+</html>
