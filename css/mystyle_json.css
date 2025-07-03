@@ -74,6 +74,11 @@
             margin-bottom: 30px;
         }
 
+        .home-button-center {
+            text-align: center;
+            margin: 30px 0;
+        }
+
         button {
             padding: 12px 24px;
             border: none;
@@ -116,8 +121,38 @@
             box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
         }
 
-        .results-section {
-            margin-top: 30px;
+        .btn-gohome {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-gohome {
+            /* เพิ่ม base styles เหมือนปุ่มอื่นๆ */
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-decoration: none; /* สำหรับ link */
+            display: inline-block; /* สำหรับ link */
+            text-align: center; /* สำหรับ link */
+            
+            /* สีและ gradient */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-gohome:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            text-decoration: none; /* ป้องกัน underline เมื่อ hover */
+            color: white; /* รักษาสีข้อความเมื่อ hover */
         }
 
         .table-container {
