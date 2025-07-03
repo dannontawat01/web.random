@@ -1,4 +1,4 @@
-        let jsonData = [];
+let jsonData = [];
 
         function showMessage(message, type = 'error') {
             const messageArea = document.getElementById('messageArea');
@@ -9,61 +9,92 @@
         }
 
         function convertJSONToTable() {
-            const jsonText = document.getElementById('jsonInput').value.trim();
-            
-            if (!jsonText) {
-                showMessage('กรุณาใส่ข้อมูล JSON');
+            const input = document.getElementById('jsonInput').value.trim();
+            if (!input) {
+                showMessage('กรุณาใส่ข้อมูล JSON', 'error');
                 return;
             }
 
+            let jsonObjects = [];
+            let parseError = false;
+
+            // 1. ลอง parse แบบ JSON array หรือ object ปกติ
             try {
-                jsonData = JSON.parse(jsonText);
-                
-                if (!Array.isArray(jsonData) || jsonData.length === 0) {
-                    showMessage('ข้อมูล JSON ต้องเป็น Array และมีข้อมูลอย่างน้อย 1 รายการ');
-                    return;
+                const arr = JSON.parse(input);
+                if (Array.isArray(arr)) {
+                    jsonObjects = arr;
+                } else if (typeof arr === 'object') {
+                    jsonObjects = [arr];
                 }
-
-                const headers = [
-                    'Mobile No',
-                    'ID Card',
-                    'Customer Account',
-                    'Service Account',
-                    'Billing Account',
-                    'Order No',
-                    'FS',
-                    'PrivateIdValue'
-                ];
-
-                let tableHTML = '<table><thead><tr>';
-                headers.forEach(header => {
-                    tableHTML += `<th>${header}</th>`;
-                });
-                tableHTML += '</tr></thead><tbody>';
-
-                jsonData.forEach(row => {
-                    tableHTML += '<tr>';
-                    tableHTML += `<td>${row['nonMobileNo'] || ''}</td>`;
-                    tableHTML += `<td>${row['publicIdValue'] || ''}</td>`;
-                    tableHTML += `<td>${row['caNumber'] || ''}</td>`;
-                    tableHTML += `<td>${row['saNumber'] || ''}</td>`;
-                    tableHTML += `<td>${row['baNumber'] || ''}</td>`;
-                    tableHTML += `<td>${row['orderRefId'] || ''}</td>`;
-                    tableHTML += `<td>${row['orderNo'] || ''}</td>`;
-                    tableHTML += `<td>${row['privateIdValue'] || ''}</td>`;
-                    tableHTML += '</tr>';
-                });
-
-                tableHTML += '</tbody></table>';
-                
-                document.getElementById('resultTableContent').innerHTML = tableHTML;
-                document.getElementById('resultTable').style.display = 'block';
-                
-                showMessage(`แปลงข้อมูลสำเร็จ! พบข้อมูล ${jsonData.length} รายการ`, 'success');
-                
             } catch (e) {
-                showMessage(`ข้อมูล JSON ไม่ถูกต้อง: ${e.message}`);
+                // 2. ถ้าไม่สำเร็จ ให้รวม object ที่ถูก wrap ด้วย "..." (แต่ละ object อาจหลายบรรทัด)
+                // ใช้ regex แยก object ที่ถูก wrap ด้วย "..." ออกจาก input
+                const matches = input.match(/"({[\s\S]*?})"/g);
+                if (matches && matches.length > 0) {
+                    for (let m of matches) {
+                        // ตัด " ที่หัวและท้าย
+                        let line = m.slice(1, -1);
+                        // แปลง double quote ซ้อนกันเป็น quote เดียว
+                        line = line.replace(/""/g, '"');
+                        try {
+                            const obj = JSON.parse(line);
+                            jsonObjects.push(obj);
+                        } catch (err) {
+                            parseError = true;
+                            break;
+                        }
+                    }
+                } else {
+                    parseError = true;
+                }
             }
+
+            if (parseError || jsonObjects.length === 0) {
+                showMessage('รูปแบบ JSON ไม่ถูกต้อง หรือไม่รองรับ', 'error');
+                document.getElementById('resultTable').style.display = 'none';
+                return;
+            }
+
+            // สร้างตาราง
+            renderTable(jsonObjects, 'resultTableContent');
+            document.getElementById('resultTable').style.display = 'block';
+            showMessage('แปลง JSON สำเร็จ!', 'success');
+        }
+
+        function renderTable(data, elementId) {
+            const headers = [
+                'Mobile No',
+                'ID Card',
+                'Customer Account',
+                'Service Account',
+                'Billing Account',
+                'Order No',
+                'FS',
+                'PrivateIdValue'
+            ];
+
+            let tableHTML = '<table><thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            data.forEach(row => {
+                tableHTML += '<tr>';
+                tableHTML += `<td>${row['nonMobileNo'] || ''}</td>`;
+                tableHTML += `<td>${row['publicIdValue'] || ''}</td>`;
+                tableHTML += `<td>${row['caNumber'] || ''}</td>`;
+                tableHTML += `<td>${row['saNumber'] || ''}</td>`;
+                tableHTML += `<td>${row['baNumber'] || ''}</td>`;
+                tableHTML += `<td>${row['orderRefId'] || ''}</td>`;
+                tableHTML += `<td>${row['orderNo'] || ''}</td>`;
+                tableHTML += `<td>${row['privateIdValue'] || ''}</td>`;
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById(elementId).innerHTML = tableHTML;
         }
 
         function copyTableData(tableId, format = 'csv') {
