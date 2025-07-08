@@ -77,8 +77,24 @@ let jsonData = [];
             headers.forEach((header, colIdx) => {
                 tableHTML += `<th style="text-align:center;vertical-align:middle;white-space:nowrap;">
                     <span style="cursor:pointer" onclick="copyColumn(${colIdx})" title="คลิกเพื่อคัดลอกแนวตั้ง">${header}</span>
-                    <button style="font-size:9px;padding:1px 4px;height:18px;margin-left:4px;vertical-align:middle"
-                        onclick="event.stopPropagation();copyColumnWithQuotes(${colIdx})">✂️</button>
+                    <button
+                        style="
+                            font-size:14px;
+                            padding:2px 3px;
+                            height:26px;
+                            margin-left:1px;
+                            vertical-align:middle;
+                            border-radius:8px;
+                            border:1px solid #d1d5db;
+                            background:#f3f4f6;
+                            cursor:pointer;
+                            transition:background 0.2s;
+                        "
+                        onmouseover="this.style.background='#e0e7ef'"
+                        onmouseout="this.style.background='#f3f4f6'"
+                        onclick="event.stopPropagation();copyColumnWithQuotes(${colIdx})"
+                        title="คัดลอกแบบมี quote"
+                    >✂️</button>
                 </th>`;
             });
             tableHTML += '</tr></thead><tbody>';
