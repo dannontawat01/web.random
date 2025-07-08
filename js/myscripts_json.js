@@ -74,8 +74,12 @@ let jsonData = [];
             ];
 
             let tableHTML = '<table><thead><tr>';
-            headers.forEach(header => {
-                tableHTML += `<th>${header}</th>`;
+            headers.forEach((header, colIdx) => {
+                tableHTML += `<th style="text-align:center;vertical-align:middle;white-space:nowrap;">
+                    <span style="cursor:pointer" onclick="copyColumn(${colIdx})" title="คลิกเพื่อคัดลอกแนวตั้ง">${header}</span>
+                    <button style="font-size:9px;padding:1px 4px;height:18px;margin-left:4px;vertical-align:middle"
+                        onclick="event.stopPropagation();copyColumnWithQuotes(${colIdx})">✂️</button>
+                </th>`;
             });
             tableHTML += '</tr></thead><tbody>';
 
@@ -93,8 +97,38 @@ let jsonData = [];
             });
 
             tableHTML += '</tbody></table>';
-            
             document.getElementById(elementId).innerHTML = tableHTML;
+
+            window._verticalTableData = data.map(row => [
+                row['nonMobileNo'] || '',
+                row['publicIdValue'] || '',
+                row['caNumber'] || '',
+                row['saNumber'] || '',
+                row['baNumber'] || '',
+                row['orderRefId'] || '',
+                row['orderNo'] || '',
+                row['privateIdValue'] || ''
+            ]);
+        }
+
+        // ฟังก์ชันคัดลอกแนวตั้งแบบ quote
+        function copyColumnWithQuotes(colIdx) {
+            if (!window._verticalTableData) return;
+            const colData = window._verticalTableData.map(row => `'${row[colIdx]}'`);
+            const text = colData.join(', ');
+            navigator.clipboard.writeText(text).then(() => {
+                showCopyNotification('คัดลอกแบบ quote แล้ว');
+            });
+        }
+
+        // ฟังก์ชันคัดลอกแนวตั้งปกติ
+        function copyColumn(colIdx) {
+            if (!window._verticalTableData) return;
+            const colData = window._verticalTableData.map(row => row[colIdx]);
+            const text = colData.join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                showCopyNotification('คัดลอกแนวตั้งแล้ว');
+            });
         }
 
         function copyTableData(tableId, format = 'csv') {
@@ -344,4 +378,14 @@ OrderNo : ORD002
 #### AttributeList
 --- nonMobileNo : 0898765432`;
             document.getElementById('jsonInput').value = exampleText;
+        }
+
+        // เพิ่มฟังก์ชันนี้ท้ายไฟล์
+        function copyVerticalRow(rowIndex) {
+            if (!window._verticalTableData) return;
+            const row = window._verticalTableData[rowIndex];
+            const text = row.join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                showCopyNotification('แนวตั้ง');
+            });
         }
