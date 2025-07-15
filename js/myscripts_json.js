@@ -397,11 +397,44 @@ OrderNo : ORD002
         }
 
         // เพิ่มฟังก์ชันนี้ท้ายไฟล์
-        function copyVerticalRow(rowIndex) {
-            if (!window._verticalTableData) return;
-            const row = window._verticalTableData[rowIndex];
-            const text = row.join('\n');
-            navigator.clipboard.writeText(text).then(() => {
-                showCopyNotification('แนวตั้ง');
-            });
+        // function copyVerticalRow(rowIndex) {
+        //     if (!window._verticalTableData) return;
+        //     const row = window._verticalTableData[rowIndex];
+        //     const text = row.join('\n');
+        //     navigator.clipboard.writeText(text).then(() => {
+        //         showCopyNotification('แนวตั้ง');
+        //     });
+        // }
+
+        // function toggleTheme() {
+        //     const body = document.body;
+        //     const toggleBtn = document.querySelector('.toggle-theme');
+        //     const isDark = body.classList.toggle('dark-mode');
+        //     if (isDark) {
+        //         toggleBtn.textContent = '☀️';
+        //     } else {
+        //         toggleBtn.textContent = '🌙';
+        //     }
+        // }
+
+        // ตรวจสอบหน้าไหนที่กำลังเปิดอยู่
+
+        function navigateTo(url) {
+            window.location.href = url;
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentPage = window.location.pathname.split('/').pop(); // เช่น "index.html"
+            switch (currentPage) {
+                case 'index.html':
+                case '': // สำหรับหน้า root
+                    document.getElementById('btn-index').classList.add('active');
+                    break;
+                case 'json.html':
+                    document.getElementById('btn-json').classList.add('active');
+                    break;
+                case 'json_formatter.html':
+                    document.getElementById('btn-formatter').classList.add('active');
+                    break;
+            }
+        });

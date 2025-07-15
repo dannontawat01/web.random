@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
     <link rel="stylesheet" href="css/mystyle.css">
     <title>Web Random</title>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎲 สุ่มเลข, GUID, ชื่อ & เลขตามสั่ง</h1>
+            <h1>🎲 Web Random</h1>
             <p>สร้างเลขบัตรประชาชนไทย 13 หลัก, GUID/UUID, ชื่อ-นามสกุล และเลขตามจำนวนและความยาวที่ต้องการ</p>
         </div>
 
@@ -182,13 +183,24 @@
             </div>
         </div>
         <!-- Navigation Section -->
-        <div class="button-group">
-            <a href="json.html" class="btn btn-gojson ">📊 ไปหน้า JSON to Table</a>
-        </div>
+        <!-- <div class="nav-menu">
+            <a href="index.html" class="btn-nav">หน้าแรก</a>
+            <a href="json.html" class="btn-nav">JSON ➔ Table</a>
+            <a href="json_formatter.html" class="btn-nav">JSON Formatter</a>
+        </div> -->
     </div>
 
     <!-- <a href="json.html" class="btn btn-secondary" style="margin:10px 0;display:inline-block;">ไปหน้า JSON to Table</a> -->
-    
+    <!-- <button class="toggle-theme" href="index.html" title="สุ่มเลข, GUID, ชื่อ & เลขตามสั่ง">🎲</button> -->
+    <!-- <button class="toggle-theme" href="json.html" title="สุ่มเลข, GUID, ชื่อ & เลขตามสั่ง">🗑️</button> -->
+
+    <div class="theme-button-group">
+        <!-- <button class="toggle-theme" id="btn-theme" onclick="toggleTheme()" data-tooltip="เปลี่ยนธีม">🌙</button> -->
+        <button class="toggle-theme" id="btn-formatter" onclick="navigateTo('json_formatter.html')" data-tooltip="JSON Formatter"><span>🧰</span></button>
+        <button class="toggle-theme" id="btn-json" onclick="navigateTo('json.html')" data-tooltip="JSON ➔ Table">🗃️</button>
+        <button class="toggle-theme" id="btn-index" onclick="navigateTo('index.html')" data-tooltip="สุ่มเลข, GUID, ชื่อ & เลขตามสั่ง">🎲</button>
+    </div>
+
 <script src="js/myscripts.js"></script>
 
 </body>
